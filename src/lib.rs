@@ -1,40 +1,48 @@
+use error::PResult;
+mod error;
 
 pub fn ignore_parens(stream: &str) -> String {
-    if stream.contains("(") || stream.contains(")") {
-        let result = stream.replace("(", "").replace(")", "");
-        result
-    } else {
-        String::from(stream)
-    }
+    let result = stream.replace("(", "").replace(")", "");
+    result
 }
 
 pub fn ignore_braces(stream: &str) -> String {
-    if stream.contains("{") || stream.contains("}") {
-        let result = stream.replace("(", "").replace(")", "");
-        result
-    } else {
-        String::from(stream)
-    }
+    let result = stream.replace("(", "").replace(")", "");
+    result
 }
 
 pub fn ignore_brackets(stream: &str) -> String {
-    if stream.contains("[") || stream.contains("]") {
-        let result = stream.replace("(", "").replace(")", "");
-        result
-    } else {
-        String::from(stream)
-    }
+    let result = stream.replace("(", "").replace(")", "");
+    result
 }
 
 /// Use for statements wrapped in a character, like "string literals"
 /// Returns the provided &str with every instance of the char removed.
 pub fn ignore_wrapper(wrapper: char, stream: &str) -> String {
-    if stream.contains(wrapper) {
-        let result = stream.replace(wrapper, "");
-        result
-    } else {
-        String::from(stream)
+    let result = stream.replace(wrapper, "");
+    result
+}
+
+pub fn ignore_ws(stream: &str) -> String {
+    let result = stream.replace(" ", "");
+    result
+}
+
+pub fn take_bytes(bytes: usize, stream: &str) -> PResult<String, &str> {
+    let mut buf = String::new();
+
+    // Check that the stream is as long as the amount of bytes taking
+    if !stream.len() <= bytes {
+        return PResult::Err("attempted to take more bytes than there are in stream");
     }
+    for b in stream.as_bytes() {
+        if buf.len() < bytes {
+            buf.push(*b as char);
+        } else {
+            return PResult::Ok(buf);
+        }
+    }
+    return PResult::Ok(buf);
 }
 
 
